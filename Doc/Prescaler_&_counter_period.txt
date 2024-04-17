@@ -1,0 +1,30 @@
+période voulue : 10ms (100Hz)
+
+Période clock : environ 6ns (168MHz)
+
+Counter period : 12 bits -> 4095 (+1)
+
+Pour un période de PWM : 1 680 000 coups de clock
+
+prescaler : 409 (+1)
+___________________________________________________________
+
+Période impulsion : 1ms (100Hz)
+
+Période clock : environ 6ns (168MHz)
+
+Pour un période d'impulsion : 168 000 coups de clock
+
+prescaler : 409 (+1)
+
+Valeur counter period : 410
+
+CP = ( Frequence * Période ) / Prescaler
+
+168 000 000 *   1500    
+	      1 000 000
+          410
+
+1500 * 168 000 000 / (410 * 1 000 000)
+
+1500 * 168 / (410)

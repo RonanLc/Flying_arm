@@ -1,0 +1,12 @@
+led 0 -> bit2 (PA3) -> (PA1)
+led 1 -> bit1 (PA4) -> (PA4)
+led 2 -> bit0 (PA1) -> (PA3)
+led 3 -> bit3 (PA6) -> (PA4)
+
+
+	code = 0;
+
+	code += AL_GPIO_ReadPin(FA_bit0_GPIO_Port, FA_bit0_Pin) * 1;
+	code += AL_GPIO_ReadPin(FA_bit1_GPIO_Port, FA_bit1_Pin) * 10;
+	code += AL_GPIO_ReadPin(FA_bit2_GPIO_Port, FA_bit2_Pin) * 100;
+	code += AL_GPIO_ReadPin(FA_bit3_GPIO_Port, FA_bit3_Pin) * 1000;
