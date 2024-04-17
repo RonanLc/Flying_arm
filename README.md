@@ -2,23 +2,23 @@
 
 Reprise du projet de flying arm. Le but est de détécter ce qui ne fonctionne pas et de le remettre en fonctionnement.
 
-## Electronique
+## Electronique 
 
-### - Potentiomètre bras
+### - Potentiomètre bras 
 
-### - MPU 6050
+### - MPU 6050 
 
-### - ESC moteur brushless
+### - ESC moteur brushless ✅
 
-### - LEDs
+### - LEDs ✅
 
-### - Potentiomètre platine
+### - Potentiomètre platine 
 
-### - Bouton poussoir
+### - Bouton poussoir ✅
 
-### - Clavier matriciel
+### - Clavier matriciel ✅
 
-### - Ecran LCD
+### - Ecran LCD ✅
 
 ### - Buzzer (optionnel)
 
