@@ -32,8 +32,10 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "FA_utilities.h"
 #include "clavier.h"
 #include "lcd.h"
+#include "mpu6050.h"
 
 /* USER CODE END Includes */
 
@@ -52,6 +54,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -60,8 +64,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define FA_PotArm_Pin GPIO_PIN_0
+#define FA_PotArm_GPIO_Port GPIOC
 #define FA_LED0_Pin GPIO_PIN_1
 #define FA_LED0_GPIO_Port GPIOC
+#define FA_PotBox_Pin GPIO_PIN_2
+#define FA_PotBox_GPIO_Port GPIOC
+#define FA_BP_Pin GPIO_PIN_3
+#define FA_BP_GPIO_Port GPIOC
 #define FA_LED1_Pin GPIO_PIN_0
 #define FA_LED1_GPIO_Port GPIOA
 #define FA_Cbit3_Pin GPIO_PIN_1
@@ -91,6 +101,12 @@ void Error_Handler(void);
 #define FA_Data4_GPIO_Port GPIOE
 #define FA_LED3_Pin GPIO_PIN_11
 #define FA_LED3_GPIO_Port GPIOB
+#define FA_ESC_PWM_Pin GPIO_PIN_12
+#define FA_ESC_PWM_GPIO_Port GPIOD
+#define FA_SDA_IMU_Pin GPIO_PIN_9
+#define FA_SDA_IMU_GPIO_Port GPIOC
+#define FA_SCL_IMU_Pin GPIO_PIN_8
+#define FA_SCL_IMU_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

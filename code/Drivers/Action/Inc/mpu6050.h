@@ -11,7 +11,7 @@
 #endif /* INC_GY521_H_ */
 
 #include <stdint.h>
-#include "i2c.h"
+#include "stm32f4xx_hal.h"
 
 // MPU6050 structure
 typedef struct
