@@ -35,7 +35,8 @@ extern "C" {
 #include "FA_utilities.h"
 #include "clavier.h"
 #include "lcd.h"
-#include "mpu6050.h"
+//#include "mpu6050.h"
+#include "imu.h"
 
 /* USER CODE END Includes */
 

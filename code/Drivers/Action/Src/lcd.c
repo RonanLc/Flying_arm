@@ -8,12 +8,18 @@
 #include "lcd.h"
 const uint8_t ROW_16[] = {0x00, 0x40, 0x10, 0x50};
 const uint8_t ROW_20[] = {0x00, 0x40, 0x14, 0x54};
+
 /************************************** Static declarations **************************************/
 
 static void lcd_write_data(Lcd_HandleTypeDef * lcd, uint8_t data);
 static void lcd_write_command(Lcd_HandleTypeDef * lcd, uint8_t command);
 static void lcd_write(Lcd_HandleTypeDef * lcd, uint8_t data, uint8_t len);
 
+/************************************** LCD definitions **************************************/
+
+Lcd_PortType ports[] = {FA_Data4_GPIO_Port, FA_Data5_GPIO_Port, FA_Data6_GPIO_Port, FA_Data7_GPIO_Port};
+Lcd_PinType pins[] = {FA_Data4_Pin, FA_Data5_Pin, FA_Data6_Pin, FA_Data7_Pin};
+extern Lcd_HandleTypeDef lcd;
 
 /************************************** Function definitions **************************************/
 
@@ -38,8 +44,6 @@ Lcd_HandleTypeDef Lcd_create(
 	lcd.data_pin = pin;
 	lcd.data_port = port;
 
-	Lcd_init(&lcd);
-
 	return lcd;
 }
 
@@ -48,6 +52,8 @@ Lcd_HandleTypeDef Lcd_create(
  */
 void Lcd_init(Lcd_HandleTypeDef * lcd)
 {
+	*lcd = Lcd_create(ports, pins, FA_RS_GPIO_Port, FA_RS_Pin, FA_EN_GPIO_Port, FA_EN_Pin, LCD_4_BIT_MODE);
+
 	if(lcd->mode == LCD_4_BIT_MODE)
 	{
 			lcd_write_command(lcd, 0x33);

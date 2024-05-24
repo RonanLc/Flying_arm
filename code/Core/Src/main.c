@@ -46,8 +46,10 @@ I2C_HandleTypeDef hi2c3;
 
 TIM_HandleTypeDef htim4;
 
+UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN PV */
-MPU6050_t IMU_struct;
+//MPU6050_t IMU_struct;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,6 +58,7 @@ static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C3_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -97,16 +100,32 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C3_Init();
   MX_TIM4_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  Lcd_PortType ports[] = {FA_Data4_GPIO_Port, FA_Data5_GPIO_Port, FA_Data6_GPIO_Port, FA_Data7_GPIO_Port};
+  IMU_initialize(115200);
+
+  /*Lcd_PortType ports[] = {FA_Data4_GPIO_Port, FA_Data5_GPIO_Port, FA_Data6_GPIO_Port, FA_Data7_GPIO_Port};
   Lcd_PinType pins[] = {FA_Data4_Pin, FA_Data5_Pin, FA_Data6_Pin, FA_Data7_Pin};
-  Lcd_HandleTypeDef lcd = Lcd_create(ports, pins, FA_RS_GPIO_Port, FA_RS_Pin, FA_EN_GPIO_Port, FA_EN_Pin, LCD_4_BIT_MODE);
+  Lcd_HandleTypeDef lcd = Lcd_create(ports, pins, FA_RS_GPIO_Port, FA_RS_Pin, FA_EN_GPIO_Port, FA_EN_Pin, LCD_4_BIT_MODE);*/
+
+  Lcd_HandleTypeDef lcd;
+
+  Lcd_init(&lcd);
+
+  Lcd_clear(&lcd);
+  Lcd_cursor(&lcd,0,0);
+  Lcd_string(&lcd, "Starting...");
+
+  HAL_Delay(2000);
+
+  Lcd_clear(&lcd);
+
+  //float adc_value[2];
 
 
-  float adc_value[2];
-
-
+  uint8_t tram_value[11] = {0};
+  uint8_t raw_data[30] = {0};
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,19 +135,86 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  MPU6050_Read_All(&hi2c3,&IMU_struct);
-
-	  Lcd_clear(&lcd);
-
-	  Lcd_cursor(&lcd,0,0);
-	  Lcd_int(&lcd,IMU_struct.Gx);
-	  Lcd_cursor(&lcd,0,8);
-	  Lcd_int(&lcd,IMU_struct.Gy);
-	  Lcd_cursor(&lcd,0,16);
-	  Lcd_int(&lcd,IMU_struct.Gz);
-	  HAL_Delay(100);
 
 
+	  /*if (_GyroValueUpdated) {
+
+		  Lcd_clear(&lcd);
+
+		  Lcd_string(&lcd, "Gyro - X : ");
+		  Lcd_int(&lcd, gyro[0]);
+
+		  Lcd_cursor(&lcd, 1, 0);
+		  Lcd_string(&lcd, "Y : ");
+		  Lcd_int(&lcd, gyro[1]);
+
+		  Lcd_string(&lcd, " | Z : ");
+		  Lcd_int(&lcd, gyro[2]);
+
+		  _GyroValueUpdated = 0;
+	  }*/
+
+	  uint8_t state = 0;
+
+	  HAL_UART_Receive(&huart2, raw_data, 30, HAL_MAX_DELAY);
+
+	  for(int i = 0 ; i < 30 ; i++){
+
+		  if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
+			  state = i;
+		  }
+
+		  if(state > 0 && i <= state + 11){
+
+			  tram_value[i - state] = raw_data[i];
+
+		  }
+
+	  }
+
+
+	  if(tram_value[0] == 0x55){
+
+		  /*tram_value[0] = raw_data[0];
+
+		  HAL_UART_Receive(&huart2, IMU_Raw_Data_Buffer, 10, HAL_MAX_DELAY);
+
+		  for(int i = 0 ; i < 10 ; i++){
+
+			  tram_value[i+1] = IMU_Raw_Data_Buffer[i];
+
+		  }*/
+
+		  Decode_IMU_Data(tram_value);
+
+		  Lcd_clear(&lcd);
+
+		  Lcd_cursor(&lcd,1,0);
+		  Lcd_string(&lcd, "X: ");
+		  Lcd_int(&lcd, gyro[0]);
+		  Lcd_string(&lcd, " Y: ");
+		  Lcd_int(&lcd, gyro[1]);
+		  Lcd_string(&lcd, " Z: ");
+		  Lcd_int(&lcd, gyro[2]);
+
+		  Lcd_cursor(&lcd,0,0);
+		  for(int i = 0 ; i < 11 ; i++){
+
+			  Lcd_int(&lcd, tram_value[i]);
+			  tram_value[i] = 0;
+
+		  }
+
+	  }
+
+
+	  /*if(IMU_Raw_Data_Buffer[10] != 0){
+		  for(int i = 0 ; i < 11 ; i++){
+
+			  Lcd_int(&lcd, IMU_Raw_Data_Buffer[i]);
+
+		  }
+	  }*/
 
   }
   /* USER CODE END 3 */
@@ -252,7 +338,7 @@ static void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.ClockSpeed = 100000;
+  hi2c3.Init.ClockSpeed = 400000;
   hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -326,6 +412,39 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 2 */
   HAL_TIM_MspPostInit(&htim4);
+
+}
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
 
 }
 

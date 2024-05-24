@@ -32,8 +32,9 @@ Drivers/Action/Src/lcd.o: ../Drivers/Action/Src/lcd.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/Inc/main.h ../Drivers/Action/Inc/FA_utilities.h \
- ../Drivers/Action/Inc/clavier.h ../Drivers/Action/Inc/mpu6050.h
+ ../Drivers/Action/Inc/clavier.h ../Drivers/Action/Inc/imu.h
 ../Drivers/Action/Inc/lcd.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -67,7 +68,8 @@ Drivers/Action/Src/lcd.o: ../Drivers/Action/Src/lcd.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/main.h:
 ../Drivers/Action/Inc/FA_utilities.h:
 ../Drivers/Action/Inc/clavier.h:
-../Drivers/Action/Inc/mpu6050.h:
+../Drivers/Action/Inc/imu.h:
