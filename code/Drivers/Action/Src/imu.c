@@ -3,7 +3,7 @@
 // Déclarations de variables globales
 uint8_t IMU_Raw_Data_Buffer[11];
 unsigned char IMU_Data_Buffer_counter;
-extern UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart2;
 
 double acc[3] = {0};
 double gyro[3] = {0};
@@ -28,12 +28,12 @@ void IMU_initialize(uint32_t Baudrate) {
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
     // Configure GPIO for USART2
-    GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6;
+    /*GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
-    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);*/
 
     // Configure USART2
     huart2.Instance = USART2;
@@ -51,11 +51,11 @@ void IMU_initialize(uint32_t Baudrate) {
     }
 
     // Enable the UART Data Register not empty Interrupt
-    __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+    //__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
 
     // Configure NVIC for USART
-    HAL_NVIC_SetPriority(USART2_IRQn, 0, 1);
-    HAL_NVIC_EnableIRQ(USART2_IRQn);
+    //HAL_NVIC_SetPriority(USART2_IRQn, 0, 1);
+    //HAL_NVIC_EnableIRQ(USART2_IRQn);
 
     // Send initial commands to IMU
     char gyro_reset[3] = {0xFF, 0xAA, 0x52}; // Angle initialization Z-axis to zero

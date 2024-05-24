@@ -46,7 +46,7 @@ I2C_HandleTypeDef hi2c3;
 
 TIM_HandleTypeDef htim4;
 
-UART_HandleTypeDef huart2;
+//UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 //MPU6050_t IMU_struct;
@@ -58,13 +58,16 @@ static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C3_Init(void);
 static void MX_TIM4_Init(void);
-static void MX_USART2_UART_Init(void);
+//static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+uint8_t position;
+#define  data_lgth 20
 
 /* USER CODE END 0 */
 
@@ -100,7 +103,7 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C3_Init();
   MX_TIM4_Init();
-  MX_USART2_UART_Init();
+  //MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
   IMU_initialize(115200);
@@ -117,7 +120,7 @@ int main(void)
   Lcd_cursor(&lcd,0,0);
   Lcd_string(&lcd, "Starting...");
 
-  HAL_Delay(2000);
+  HAL_Delay(500);
 
   Lcd_clear(&lcd);
 
@@ -126,6 +129,7 @@ int main(void)
 
   uint8_t tram_value[11] = {0};
   uint8_t raw_data[30] = {0};
+  uint8_t state = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -154,28 +158,59 @@ int main(void)
 		  _GyroValueUpdated = 0;
 	  }*/
 
-	  uint8_t state = 0;
+	  if ( HAL_GPIO_ReadPin(FA_BP_GPIO_Port, FA_BP_Pin) == GPIO_PIN_SET){
 
-	  HAL_UART_Receive(&huart2, raw_data, 30, HAL_MAX_DELAY);
+		  HAL_UART_Receive(&huart2, raw_data, data_lgth, HAL_MAX_DELAY);
 
-	  for(int i = 0 ; i < 30 ; i++){
+		  for(int i = 0 ; i < data_lgth ; i++){
 
-		  if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
-			  state = i;
+			  if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
+				  state = i;
+			  }
+
+			  if(state > 0 && i <= state + 11){
+
+				  tram_value[i - state] = raw_data[i];
+
+			  }
 		  }
-
-		  if(state > 0 && i <= state + 11){
-
-			  tram_value[i - state] = raw_data[i];
-
-		  }
-
 	  }
 
+	  /*if ( HAL_GPIO_ReadPin(FA_CbitInterrupt_GPIO_Port, FA_CbitInterrupt_Pin) == 1){
 
-	  if(tram_value[0] == 0x55){
+		  if (keyboardTranslate() == 'D'){
 
-		  /*tram_value[0] = raw_data[0];
+			  position++;
+			  if(position > 30){ position = 30; }
+
+		  }
+
+		  else if (keyboardTranslate() == '*'){
+
+			  position--;
+
+			  if(position < 0){ position = 0; }
+
+		  }
+	  }*/
+
+
+	  Lcd_cursor(&lcd, 1, 0);
+	  Lcd_int(&lcd, position);
+	  Lcd_string(&lcd, "  ");
+
+	  Lcd_cursor(&lcd, 0, 0);
+	  for(int i = position ; i < position + 6 ; i++){
+
+		  Lcd_int(&lcd, raw_data[i]);
+		  Lcd_string(&lcd, " ");
+	  }
+	  Lcd_string(&lcd, "           ");
+
+
+	  /*if(tram_value[0] == 0x55){
+
+		  tram_value[0] = raw_data[0];
 
 		  HAL_UART_Receive(&huart2, IMU_Raw_Data_Buffer, 10, HAL_MAX_DELAY);
 
@@ -183,13 +218,18 @@ int main(void)
 
 			  tram_value[i+1] = IMU_Raw_Data_Buffer[i];
 
-		  }*/
+		  }
 
 		  Decode_IMU_Data(tram_value);
 
-		  Lcd_clear(&lcd);
+		  //Lcd_clear(&lcd);
 
 		  Lcd_cursor(&lcd,1,0);
+		  Lcd_string(&lcd, "Y: ");
+		  Lcd_int(&lcd, gyro[1]);
+		  Lcd_string(&lcd, "           ");
+
+		  /*Lcd_cursor(&lcd,1,0);
 		  Lcd_string(&lcd, "X: ");
 		  Lcd_int(&lcd, gyro[0]);
 		  Lcd_string(&lcd, " Y: ");
@@ -201,11 +241,20 @@ int main(void)
 		  for(int i = 0 ; i < 11 ; i++){
 
 			  Lcd_int(&lcd, tram_value[i]);
+			  Lcd_string(&lcd, " ");
 			  tram_value[i] = 0;
 
 		  }
 
-	  }
+		  Lcd_cursor(&lcd, 0, 0);
+		  for(int i = 4 ; i < 6 ; i++){
+
+			  Lcd_int(&lcd, raw_data[i]);
+			  Lcd_string(&lcd, " ");
+		  }
+		  Lcd_string(&lcd, "           ");
+
+	  }*/
 
 
 	  /*if(IMU_Raw_Data_Buffer[10] != 0){
@@ -420,8 +469,7 @@ static void MX_TIM4_Init(void)
   * @param None
   * @retval None
   */
-static void MX_USART2_UART_Init(void)
-{
+//static void MX_USART2_UART_Init(void) {
 
   /* USER CODE BEGIN USART2_Init 0 */
 
@@ -430,6 +478,9 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 1 */
 
   /* USER CODE END USART2_Init 1 */
+
+  /*
+
   huart2.Instance = USART2;
   huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
@@ -442,11 +493,14 @@ static void MX_USART2_UART_Init(void)
   {
     Error_Handler();
   }
+
+  */
+
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
 
-}
+//}
 
 /**
   * @brief GPIO Initialization Function
@@ -537,12 +591,22 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-/*void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-	keyboardTranslate();
-		HAL_Delay(1);
+	char letter = keyboardTranslate();
 
-}*/
+	if (letter == 'D'){
+
+		position++;
+		if(position > data_lgth){ position = data_lgth; }
+	}
+
+	else if (letter == 'C'){
+
+		if(position == 0){ position = 1; }
+		position--;
+	}
+}
 
 
 /* USER CODE END 4 */
