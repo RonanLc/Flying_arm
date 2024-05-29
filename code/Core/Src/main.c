@@ -158,23 +158,25 @@ int main(void)
 		  _GyroValueUpdated = 0;
 	  }*/
 
-	  if ( HAL_GPIO_ReadPin(FA_BP_GPIO_Port, FA_BP_Pin) == GPIO_PIN_SET){
 
-		  HAL_UART_Receive(&huart2, raw_data, data_lgth, HAL_MAX_DELAY);
+	  HAL_UART_Receive(&huart2, raw_data, data_lgth, HAL_MAX_DELAY);
 
-		  for(int i = 0 ; i < data_lgth ; i++){
+	  state = 0;
 
-			  if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
-				  state = i;
-			  }
+	  for(int i = 0 ; i < data_lgth ; i++){
 
-			  if(state > 0 && i <= state + 11){
+		  //if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
+		  if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
+			  state = i;
+		  }
 
-				  tram_value[i - state] = raw_data[i];
+		  if(state > 0 && i <= state + 11){
 
-			  }
+			  tram_value[i - state] = raw_data[i];
+
 		  }
 	  }
+
 
 	  /*if ( HAL_GPIO_ReadPin(FA_CbitInterrupt_GPIO_Port, FA_CbitInterrupt_Pin) == 1){
 
@@ -194,15 +196,15 @@ int main(void)
 		  }
 	  }*/
 
+	  Decode_IMU_Data(tram_value);
 
 	  Lcd_cursor(&lcd, 1, 0);
-	  Lcd_int(&lcd, position);
-	  Lcd_string(&lcd, "  ");
+	  Lcd_int(&lcd, gyro[1]);
 
 	  Lcd_cursor(&lcd, 0, 0);
-	  for(int i = position ; i < position + 6 ; i++){
+	  for(int i = 0 ; i < 11 ; i++){
 
-		  Lcd_int(&lcd, raw_data[i]);
+		  Lcd_int(&lcd, tram_value[i]);
 		  Lcd_string(&lcd, " ");
 	  }
 	  Lcd_string(&lcd, "           ");
@@ -593,19 +595,6 @@ static void MX_GPIO_Init(void)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-	char letter = keyboardTranslate();
-
-	if (letter == 'D'){
-
-		position++;
-		if(position > data_lgth){ position = data_lgth; }
-	}
-
-	else if (letter == 'C'){
-
-		if(position == 0){ position = 1; }
-		position--;
-	}
 }
 
 
