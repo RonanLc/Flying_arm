@@ -23,7 +23,7 @@ extern volatile int _GyroValueUpdated;
 extern volatile int _IsGyroIntialized;
 
 // Déclarations des fonctions
-void IMU_initialize(uint32_t Baudrate);
+void Sensor_init();
 void Decode_IMU_Data(uint8_t IMU_Raw_Data_Buffer[11]);
 void GyroOffset_Init(void);
 void Imu_Error_Handler(void);

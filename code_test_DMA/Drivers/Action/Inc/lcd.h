@@ -20,6 +20,22 @@
 extern const uint8_t ROW_16[];
 extern const uint8_t ROW_20[];
 
+
+/*********************************** LCD Pins connections ***********************************/
+
+#define LCD_data7_Pin GPIO_PIN_7
+#define LCD_data7_GPIO_Port GPIOE
+#define LCD_data6_Pin GPIO_PIN_8
+#define LCD_data6_GPIO_Port GPIOE
+#define LCD_data5_Pin GPIO_PIN_9
+#define LCD_data5_GPIO_Port GPIOE
+#define LCD_data4_Pin GPIO_PIN_15
+#define LCD_data4_GPIO_Port GPIOE
+#define LCD_EN_Pin GPIO_PIN_11
+#define LCD_EN_GPIO_Port GPIOE
+#define LCD_RS_Pin GPIO_PIN_13
+#define LCD_RS_GPIO_Port GPIOE
+
 /************************************** Command register **************************************/
 #define CLEAR_DISPLAY 0x01
 
@@ -44,10 +60,6 @@ extern const uint8_t ROW_20[];
 #define OPT_F 0x04						// Set alternate font
 #define SETCGRAM_ADDR 0x040
 #define SET_DDRAM_ADDR 0x80				// Set DDRAM address
-
-
-/************************************** Helper macros **************************************/
-#define DELAY(X) HAL_Delay(X)
 
 
 /************************************** LCD defines **************************************/
@@ -83,15 +95,16 @@ typedef struct {
 
 
 /************************************** Public functions **************************************/
-void Lcd_init(Lcd_HandleTypeDef * lcd);
-void Lcd_int(Lcd_HandleTypeDef * lcd, int number);
-void Lcd_string(Lcd_HandleTypeDef * lcd, char * string);
-void Lcd_cursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);
+void Lcd_init();
+void Lcd_int(int number);
+void Lcd_float(float number);
+void Lcd_string(char * string);
+void Lcd_cursor(uint8_t row, uint8_t col);
 Lcd_HandleTypeDef Lcd_create(
 		Lcd_PortType port[], Lcd_PinType pin[],
 		Lcd_PortType rs_port, Lcd_PinType rs_pin,
 		Lcd_PortType en_port, Lcd_PinType en_pin, Lcd_ModeTypeDef mode);
-void Lcd_define_char(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
-void Lcd_clear(Lcd_HandleTypeDef * lcd);
+void Lcd_define_char(uint8_t code, uint8_t bitmap[]);
+void Lcd_clear();
 
 #endif /* LCD_H_ */

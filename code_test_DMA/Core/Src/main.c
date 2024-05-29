@@ -40,7 +40,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
@@ -48,14 +47,17 @@ UART_HandleTypeDef huart2;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+#define data_lgth 20
+
+uint8_t tram_value[11];
+uint8_t raw_data[data_lgth];
 
 /* USER CODE END 0 */
 
@@ -87,9 +89,21 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  Sensor_init();
+
+  Lcd_init();
+
+  Lcd_clear();
+  Lcd_cursor(0,0);
+  Lcd_string("Starting...");
+
+  HAL_Delay(500);
+
+  Lcd_clear();
+
+  HAL_UART_Receive_DMA(&huart2, raw_data, data_lgth);
 
   /* USER CODE END 2 */
 
@@ -100,6 +114,20 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	Decode_IMU_Data(tram_value);
+
+	Lcd_cursor(1, 0);
+	Lcd_float(gyro[1]);
+
+	Lcd_cursor(0, 0);
+	for(int i = 0 ; i < 11 ; i++){
+
+	  Lcd_int(tram_value[i]);
+	  Lcd_string(" ");
+	}
+	Lcd_string("           ");
+
   }
   /* USER CODE END 3 */
 }
@@ -145,72 +173,27 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief USART2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART2_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART2_Init 0 */
-
-  /* USER CODE END USART2_Init 0 */
-
-  /* USER CODE BEGIN USART2_Init 1 */
-
-  /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART2_Init 2 */
-
-  /* USER CODE END USART2_Init 2 */
-
-}
-
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOE_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, LCD_data7_Pin|LCD_data6_Pin|LCD_data5_Pin|LCD_EN_Pin
-                          |LCD_RS_Pin|LCD_data4_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : LCD_data7_Pin LCD_data6_Pin LCD_data5_Pin LCD_EN_Pin
-                           LCD_RS_Pin LCD_data4_Pin */
-  GPIO_InitStruct.Pin = LCD_data7_Pin|LCD_data6_Pin|LCD_data5_Pin|LCD_EN_Pin
-                          |LCD_RS_Pin|LCD_data4_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
-}
-
 /* USER CODE BEGIN 4 */
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+
+	uint8_t state = 0;
+
+	for(int i = 0 ; i < data_lgth ; i++){
+
+		  //if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
+		  if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
+			  state = i;
+		  }
+
+		  if(state > 0 && i <= state + 11){
+
+			  tram_value[i - state] = raw_data[i];
+
+		  }
+	  }
+
+}
 
 /* USER CODE END 4 */
 
