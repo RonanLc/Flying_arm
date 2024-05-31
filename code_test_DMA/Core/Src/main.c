@@ -54,11 +54,6 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-#define data_lgth 20
-
-uint8_t tram_value[11];
-uint8_t raw_data[data_lgth];
-
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +86,8 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
+  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
+
   Sensor_init();
 
   Lcd_init();
@@ -103,7 +100,7 @@ int main(void)
 
   Lcd_clear();
 
-  HAL_UART_Receive_DMA(&huart2, raw_data, data_lgth);
+  double gyro;
 
   /* USER CODE END 2 */
 
@@ -115,15 +112,15 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	Decode_IMU_Data(tram_value);
+	gyro = Sensor_GetGyro();
 
 	Lcd_cursor(1, 0);
-	Lcd_float(gyro[1]);
+	Lcd_float(gyro);
 
 	Lcd_cursor(0, 0);
 	for(int i = 0 ; i < 11 ; i++){
 
-	  Lcd_int(tram_value[i]);
+	  Lcd_int(IMU_gyro_data[i][0]);
 	  Lcd_string(" ");
 	}
 	Lcd_string("           ");
@@ -174,26 +171,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-
-	uint8_t state = 0;
-
-	for(int i = 0 ; i < data_lgth ; i++){
-
-		  //if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
-		  if(raw_data[i] == 0x55 && raw_data[i+1] == 0x52){
-			  state = i;
-		  }
-
-		  if(state > 0 && i <= state + 11){
-
-			  tram_value[i - state] = raw_data[i];
-
-		  }
-	  }
-
-}
 
 /* USER CODE END 4 */
 

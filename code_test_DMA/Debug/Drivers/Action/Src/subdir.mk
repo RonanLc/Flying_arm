@@ -5,16 +5,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Drivers/Action/Src/imu.c \
-../Drivers/Action/Src/lcd.c 
+../Drivers/Action/Src/lcd.c \
+../Drivers/Action/Src/sensor.c 
 
 OBJS += \
-./Drivers/Action/Src/imu.o \
-./Drivers/Action/Src/lcd.o 
+./Drivers/Action/Src/lcd.o \
+./Drivers/Action/Src/sensor.o 
 
 C_DEPS += \
-./Drivers/Action/Src/imu.d \
-./Drivers/Action/Src/lcd.d 
+./Drivers/Action/Src/lcd.d \
+./Drivers/Action/Src/sensor.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -24,7 +24,7 @@ Drivers/Action/Src/%.o Drivers/Action/Src/%.su Drivers/Action/Src/%.cyclo: ../Dr
 clean: clean-Drivers-2f-Action-2f-Src
 
 clean-Drivers-2f-Action-2f-Src:
-	-$(RM) ./Drivers/Action/Src/imu.cyclo ./Drivers/Action/Src/imu.d ./Drivers/Action/Src/imu.o ./Drivers/Action/Src/imu.su ./Drivers/Action/Src/lcd.cyclo ./Drivers/Action/Src/lcd.d ./Drivers/Action/Src/lcd.o ./Drivers/Action/Src/lcd.su
+	-$(RM) ./Drivers/Action/Src/lcd.cyclo ./Drivers/Action/Src/lcd.d ./Drivers/Action/Src/lcd.o ./Drivers/Action/Src/lcd.su ./Drivers/Action/Src/sensor.cyclo ./Drivers/Action/Src/sensor.d ./Drivers/Action/Src/sensor.o ./Drivers/Action/Src/sensor.su
 
 .PHONY: clean-Drivers-2f-Action-2f-Src
 

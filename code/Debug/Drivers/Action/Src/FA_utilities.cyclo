@@ -1,3 +1,0 @@
-../Drivers/Action/Src/FA_utilities.c:19:6:set_pwm_tim4	1
-../Drivers/Action/Src/FA_utilities.c:29:6:get_new_pot_values	3
-../Drivers/Action/Src/FA_utilities.c:50:6:pot_value_to_rad	1

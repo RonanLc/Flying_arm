@@ -33,7 +33,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 
 #include "lcd.h"
-#include "imu.h"
+#include "sensor.h"
 
 /* USER CODE END Includes */
 
