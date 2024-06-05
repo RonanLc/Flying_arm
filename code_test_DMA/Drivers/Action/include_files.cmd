@@ -14,9 +14,10 @@ set "HALversion=1.28.0"
 rem Défini les types de fichier à ajouter au projet, à bien noter en minuscule
 set "composant[0]=uart"
 set "composant[1]=usart"
+set "composant[2]=tim"
 
 rem Défini le nombre de fichier à ajouter (lié directement aux variables d'au dessus)
-set "nombreComposant=2"
+set "nombreComposant=3"
 
 rem Défini la vitesse de la clock externe (en Hz)
 set "hse_clock_speed=8000000"

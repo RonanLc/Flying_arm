@@ -34,6 +34,7 @@ extern "C" {
 
 #include "lcd.h"
 #include "sensor.h"
+#include "motor.h"
 
 /* USER CODE END Includes */
 
