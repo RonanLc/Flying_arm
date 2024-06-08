@@ -87,8 +87,6 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
-  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
-
   Motor_init();
 
   Sensor_init();
@@ -121,11 +119,13 @@ int main(void)
 	Lcd_cursor(1, 0);
 
 	if (gyro > 100) {
-		TIM4->CCR1 = 819;
+		Motor_Start();
+		Motor_SetTime(1500);
 		state = 1;
 	}
+
 	else if (gyro < -100) {
-		TIM4->CCR1 = 410;
+		Motor_Stop();
 		state = 0;
 	}
 

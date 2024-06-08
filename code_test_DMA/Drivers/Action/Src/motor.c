@@ -3,6 +3,36 @@
 
 TIM_HandleTypeDef htim4;
 
+
+
+void Motor_Stop(void){
+	Motor_SetSpeed(0);
+	HAL_Delay(100);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
+}
+
+void Motor_Start(void){
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+}
+
+void Motor_SetCounterValue(uint32_t counterValue){
+	TIM4->CCR1 = counterValue;
+}
+
+void Motor_SetSpeed(uint8_t pourcent){
+
+	if(pourcent > 100){ pourcent = 100; }
+
+	uint32_t range = TIM4->ARR / 10;
+
+	TIM4->CCR1 = range + (range * pourcent / 100);
+}
+
+void Motor_SetTime(uint16_t usTime){
+	TIM4->CCR1 = TIM4->ARR * usTime / 10000;
+}
+
+
 void Clock_init(void) {
 	RCC_OscInitTypeDef RCC_OscInitStruct = {0};
 	RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
@@ -49,6 +79,8 @@ void Motor_init(void) {
 	__HAL_RCC_GPIOH_CLK_ENABLE();
 	__HAL_RCC_GPIOD_CLK_ENABLE();
 
+	__HAL_RCC_TIM4_CLK_ENABLE();
+
 	TIM_ClockConfigTypeDef sClockSourceConfig = {0};
 	TIM_MasterConfigTypeDef sMasterConfig = {0};
 	TIM_OC_InitTypeDef sConfigOC = {0};
@@ -90,11 +122,18 @@ void Motor_init(void) {
 		MOTOR_Error_Handler();
 	}
 
-	HAL_TIM_MspPostInit(&htim4);
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    GPIO_InitStruct.Pin = GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
 
-	TIM4->CCR1 = 0;
+	TIM4->CCR1 = 410;
 }
 
 
@@ -106,29 +145,4 @@ void MOTOR_Error_Handler(void) {
 }
 
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(htim->Instance==TIM4)
-  {
-  /* USER CODE BEGIN TIM4_MspPostInit 0 */
 
-  /* USER CODE END TIM4_MspPostInit 0 */
-
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-    /**TIM4 GPIO Configuration
-    PD12     ------> TIM4_CH1
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_12;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
-    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN TIM4_MspPostInit 1 */
-
-  /* USER CODE END TIM4_MspPostInit 1 */
-  }
-
-}

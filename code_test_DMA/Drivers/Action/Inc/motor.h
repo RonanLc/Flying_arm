@@ -18,8 +18,14 @@ extern TIM_HandleTypeDef htim4;
 
 void Clock_init(void);
 void Motor_init(void);
+
+void Motor_Stop(void);
+void Motor_Start(void);
+void Motor_SetCounterValue(uint32_t counterValue);
+void Motor_SetSpeed(uint8_t pourcent);
+void Motor_SetTime(uint16_t usTime);
+
 void MOTOR_Error_Handler(void);
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 #ifdef __cplusplus
 }
