@@ -15,9 +15,10 @@ rem Défini les types de fichier à ajouter au projet, à bien noter en minuscul
 set "composant[0]=uart"
 set "composant[1]=usart"
 set "composant[2]=tim"
+set "composant[3]=adc"
 
 rem Défini le nombre de fichier à ajouter (lié directement aux variables d'au dessus)
-set "nombreComposant=3"
+set "nombreComposant=4"
 
 rem Défini la vitesse de la clock externe (en Hz)
 set "hse_clock_speed=8000000"
@@ -54,8 +55,11 @@ for /L %%i in (0 1 %nombreComposant%) do (
     rem Ajoute les fichiers HAL au projet
     copy "%HALSrcPath%stm32f4xx_hal_!composant!.c" "..\STM32F4xx_HAL_Driver\Src"
     copy "%HALSrcPath%stm32f4xx_ll_!composant!.c" "..\STM32F4xx_HAL_Driver\Src"
+    copy "%HALSrcPath%stm32f4xx_hal_!composant!_ex.c" "..\STM32F4xx_HAL_Driver\Src"
+    
     copy "%HALIncPath%stm32f4xx_hal_!composant!.h" "..\STM32F4xx_HAL_Driver\Inc"
     copy "%HALIncPath%stm32f4xx_ll_!composant!.h" "..\STM32F4xx_HAL_Driver\Inc"
+    copy "%HALIncPath%stm32f4xx_hal_!composant!_ex.h" "..\STM32F4xx_HAL_Driver\Inc"
 
     rem Met en majuscule le nom des composants pour les #define
     set composant=!composant[%%i]!
@@ -139,27 +143,6 @@ rename "%tempPath%" "%confFile%"
 
 rem Efface le fichier de sortie si jamais il existe toujours (normalement pas executé)
 if exist "%tempPath%" del "%tempPath%"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 EXIT /b 0
 

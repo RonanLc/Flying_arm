@@ -22,28 +22,72 @@ extern DMA_HandleTypeDef hdma_usart2_rx;
 extern uint8_t IMU_data_buffer[IMU_RECEIVE_DATA_LGTH];
 extern uint8_t IMU_gyro_data[IMU_GYRO_DATA_LGTH][IMU_GYRO_MEAN_VALUE];
 
-// Déclarations de variables pour les mesures
-extern double acc[3];
-extern double gyro[3];
-extern double angle[3];
+extern double acc[3], gyro[3], angle[3];
 extern double gyro_offset[3];
 
 // Déclarations des fonctions
+
+/*********************************************************/
+/*********************** Sensor **************************/
+/*********************************************************/
 
 void Sensor_init(void);
 double Sensor_GetAngle(void);
 double Sensor_GetGyro(void);
 double Sensor_GetMotorSpeed(void);
+void Sensor_Error_Handler(void);
 
-void IMU_init(void) ;
+/*********************************************************/
+/************************ Angle **************************/
+/*********************************************************/
+
+#define ADC_MEAN_VALUE 100
+#define POT_START_ANGLE -32
+
+extern ADC_HandleTypeDef hadc2;
+extern DMA_HandleTypeDef hdma_adc2;
+
+extern uint32_t ADC_data_buffer[POT_ADC_MEAN_VALUE];
+
+
+uint32_t Get_Pot_Value(void);
+void ADC_init(void);
+void ADC_init_PotOffset(void);
+
+
+void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc);
+void DMA2_Stream2_IRQHandler(void);
+
+/*********************************************************/
+/************************ Gyro ***************************/
+/*********************************************************/
+
+#define IMU_RECEIVE_DATA_LGTH 200
+#define IMU_GYRO_DATA_LGTH 8
+#define IMU_GYRO_MEAN_VALUE 6
+
+extern UART_HandleTypeDef huart2;
+extern DMA_HandleTypeDef hdma_usart2_rx;
+
+extern uint8_t IMU_data_buffer[IMU_RECEIVE_DATA_LGTH];
+extern uint8_t IMU_gyro_data[IMU_GYRO_DATA_LGTH][IMU_GYRO_MEAN_VALUE];
+
+extern double acc[3], gyro[3], angle[3];
+extern double gyro_offset[3];
+
+
+void IMU_init(void);
 uint8_t IMU_Decode_Gyro_Data(void);
 void IMU_Calculate_Gyro(void);
 void IMU_Calculate_All_Data(uint8_t IMU_Raw_Data_Buffer[8]);
 void IMU_init_GyroOffset(void);
-void IMU_Error_Handler(void);
 
 void HAL_UART_MspInit(UART_HandleTypeDef* huart);
 void DMA1_Stream5_IRQHandler(void);
+
+/*********************************************************/
+/************************ Speed **************************/
+/*********************************************************/
 
 #ifdef __cplusplus
 }

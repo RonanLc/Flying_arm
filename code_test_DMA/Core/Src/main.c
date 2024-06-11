@@ -133,6 +133,10 @@ int main(void)
 	Lcd_string(" | ");
 	Lcd_float(gyro);
 
+	Lcd_cursor(1, 11);
+	Lcd_string(" | ");
+	Lcd_int(Get_Pot_Value());
+
 	Lcd_cursor(0, 0);
 	for(int i = 0 ; i < 11 ; i++){
 

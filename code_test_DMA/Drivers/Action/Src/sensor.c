@@ -1,18 +1,16 @@
 
 #include "sensor.h"
 
-UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart2_rx;
 
-uint8_t IMU_data_buffer[IMU_RECEIVE_DATA_LGTH];
-uint8_t IMU_gyro_data[IMU_GYRO_DATA_LGTH][IMU_GYRO_MEAN_VALUE];
 
-double acc[3], gyro[3], angle[3];
-double gyro_offset[3] = {0};
 
-// Fonctions
+/*********************************************************/
+/*********************** Sensor **************************/
+/*********************************************************/
+
 void Sensor_init(void) {
 
+	POT_init();
 	IMU_init();
 }
 
@@ -29,6 +27,135 @@ double Sensor_GetMotorSpeed(void) {
 	//return
 }
 
+void Sensor_Error_Handler(void) {
+    while(1);
+}
+
+/*********************************************************/
+/************************ Angle **************************/
+/*********************************************************/
+
+ADC_HandleTypeDef hadc2;
+DMA_HandleTypeDef hdma_adc2;
+
+uint32_t ADC_data_buffer[ADC_MEAN_VALUE];
+
+
+uint32_t Get_Pot_Value(void){
+
+	uint32_t mean_adc_value = 0;
+
+	for(int i = 0; i < ADC_MEAN_VALUE; i++){
+		mean_adc_value += ADC_data_buffer[i];
+	}
+
+	mean_adc_value /= ADC_MEAN_VALUE;
+
+	return mean_adc_value;
+}
+
+void POT_init(void) {
+
+	/* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+
+	/* DMA controller clock enable */
+	__HAL_RCC_DMA2_CLK_ENABLE();
+
+	/* DMA interrupt init */
+	/* DMA2_Stream2_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+
+	ADC_ChannelConfTypeDef sConfig = {0};
+
+	hadc2.Instance = ADC2;
+	hadc2.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+	hadc2.Init.Resolution = ADC_RESOLUTION_12B;
+	hadc2.Init.ScanConvMode = DISABLE;
+	hadc2.Init.ContinuousConvMode = ENABLE;
+	hadc2.Init.DiscontinuousConvMode = DISABLE;
+	hadc2.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+	hadc2.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+	hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+	hadc2.Init.NbrOfConversion = 1;
+	hadc2.Init.DMAContinuousRequests = ENABLE;
+	hadc2.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+
+	if (HAL_ADC_Init(&hadc2) != HAL_OK) {
+		Sensor_Error_Handler();
+	}
+
+	/** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+	*/
+	sConfig.Channel = ADC_CHANNEL_10;
+	sConfig.Rank = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+
+	if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK) {
+		Sensor_Error_Handler();
+	}
+
+	HAL_ADC_Start_DMA(&hadc2, adc_data, POT_ADC_MEAN_VALUE);
+}
+
+
+void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc) {
+
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  if(hadc->Instance==ADC2)
+  {
+    /* Peripheral clock enable */
+    __HAL_RCC_ADC2_CLK_ENABLE();
+
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    /**ADC2 GPIO Configuration
+    PC0     ------> ADC2_IN10
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_0;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /* ADC2 DMA Init */
+    /* ADC2 Init */
+    hdma_adc2.Instance = DMA2_Stream2;
+    hdma_adc2.Init.Channel = DMA_CHANNEL_1;
+    hdma_adc2.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_adc2.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_adc2.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_adc2.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    hdma_adc2.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    hdma_adc2.Init.Mode = DMA_CIRCULAR;
+    hdma_adc2.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_adc2.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hdma_adc2) != HAL_OK)
+    {
+      Sensor_Error_Handler();
+    }
+
+    __HAL_LINKDMA(hadc,DMA_Handle,hdma_adc2);
+  }
+}
+
+void DMA2_Stream2_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&hdma_adc2);
+}
+
+
+/*********************************************************/
+/************************ Gyro ***************************/
+/*********************************************************/
+
+UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_rx;
+
+uint8_t IMU_data_buffer[IMU_RECEIVE_DATA_LGTH];
+uint8_t IMU_gyro_data[IMU_GYRO_DATA_LGTH][IMU_GYRO_MEAN_VALUE];
+
+double acc[3], gyro[3], angle[3];
+double gyro_offset[3] = {0};
 
 
 void IMU_init(void) {
@@ -56,7 +183,7 @@ void IMU_init(void) {
 	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
 	if (HAL_UART_Init(&huart2) != HAL_OK) {
-		IMU_Error_Handler();
+		Sensor_Error_Handler();
 	}
 
     // Send initial commands to IMU
@@ -68,8 +195,6 @@ void IMU_init(void) {
 
     IMU_init_GyroOffset();
 }
-
-
 
 uint8_t IMU_Decode_Gyro_Data(void) {
 
@@ -94,7 +219,6 @@ uint8_t IMU_Decode_Gyro_Data(void) {
 	return mean_counter;
 }
 
-
 void IMU_Calculate_Gyro(void) {
 
 	uint8_t mean_counter = IMU_Decode_Gyro_Data();
@@ -109,7 +233,6 @@ void IMU_Calculate_Gyro(void) {
 	}
 	gyro[1] = mean_gyro / mean_counter;
 }
-
 
 void IMU_Calculate_All_Data(uint8_t IMU_Raw_Data_Buffer[8]) {
     if(IMU_Raw_Data_Buffer[0] == 0x55) {
@@ -210,25 +333,14 @@ void IMU_init_GyroOffset(void) {
 }
 
 
-void IMU_Error_Handler(void) {
-
-    while(1) {
-
-    }
-}
-
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(huart->Instance==USART2)
-  {
-  /* USER CODE BEGIN USART2_MspInit 0 */
 
-  /* USER CODE END USART2_MspInit 0 */
-    /* Peripheral clock enable */
+  if(huart->Instance==USART2) {
     __HAL_RCC_USART2_CLK_ENABLE();
-
     __HAL_RCC_GPIOD_CLK_ENABLE();
+
     /**USART2 GPIO Configuration
     PD5     ------> USART2_TX
     PD6     ------> USART2_RX
@@ -254,25 +366,20 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     hdma_usart2_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart2_rx) != HAL_OK)
     {
-    	IMU_Error_Handler();
+    	Sensor_Error_Handler();
     }
 
     __HAL_LINKDMA(huart,hdmarx,hdma_usart2_rx);
-
-  /* USER CODE BEGIN USART2_MspInit 1 */
-
-  /* USER CODE END USART2_MspInit 1 */
   }
-
 }
 
-void DMA1_Stream5_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Stream5_IRQn 0 */
-
-  /* USER CODE END DMA1_Stream5_IRQn 0 */
+void DMA1_Stream5_IRQHandler(void) {
   HAL_DMA_IRQHandler(&hdma_usart2_rx);
-  /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
-
-  /* USER CODE END DMA1_Stream5_IRQn 1 */
 }
+
+
+/*********************************************************/
+/************************ Speed **************************/
+/*********************************************************/
+
+// TODO: Programmer le capteur de vitesse pour le moteur.
