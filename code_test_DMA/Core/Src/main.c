@@ -78,7 +78,7 @@ int main(void)
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  Clock_init();
+  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
@@ -120,7 +120,7 @@ int main(void)
 
 	if (gyro > 100) {
 		Motor_Start();
-		Motor_SetTime(1500);
+		Motor_SetTime(1150);
 		state = 1;
 	}
 
@@ -135,7 +135,7 @@ int main(void)
 
 	Lcd_cursor(1, 11);
 	Lcd_string(" | ");
-	Lcd_int(Get_Pot_Value());
+	Lcd_int(Sensor_GetAngle());
 
 	Lcd_cursor(0, 0);
 	for(int i = 0 ; i < 11 ; i++){

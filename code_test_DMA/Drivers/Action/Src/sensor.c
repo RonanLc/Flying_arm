@@ -10,12 +10,12 @@
 
 void Sensor_init(void) {
 
-	POT_init();
+	ADC_init();
 	IMU_init();
 }
 
 double Sensor_GetAngle(void) {
-	//return
+	return ADC_Decode_Pot();
 }
 
 double Sensor_GetGyro(void) {
@@ -39,22 +39,10 @@ ADC_HandleTypeDef hadc2;
 DMA_HandleTypeDef hdma_adc2;
 
 uint32_t ADC_data_buffer[ADC_MEAN_VALUE];
+uint32_t ADC_Start_Angle;
 
 
-uint32_t Get_Pot_Value(void){
-
-	uint32_t mean_adc_value = 0;
-
-	for(int i = 0; i < ADC_MEAN_VALUE; i++){
-		mean_adc_value += ADC_data_buffer[i];
-	}
-
-	mean_adc_value /= ADC_MEAN_VALUE;
-
-	return mean_adc_value;
-}
-
-void POT_init(void) {
+void ADC_init(void) {
 
 	/* GPIO Ports Clock Enable */
 	__HAL_RCC_GPIOC_CLK_ENABLE();
@@ -96,7 +84,36 @@ void POT_init(void) {
 		Sensor_Error_Handler();
 	}
 
-	HAL_ADC_Start_DMA(&hadc2, adc_data, POT_ADC_MEAN_VALUE);
+	HAL_ADC_Start_DMA(&hadc2, ADC_data_buffer, ADC_MEAN_VALUE);
+}
+
+
+void ADC_init_PotOffset(void) {
+
+	for(int i = 0; i < (ADC_MEAN_VALUE*ADC_MEAN_VALUE); i++){
+		ADC_Start_Angle += ADC_data_buffer[i];
+	}
+
+	ADC_Start_Angle /= (ADC_MEAN_VALUE*ADC_MEAN_VALUE);
+}
+
+double ADC_Decode_Pot(void) {
+
+	uint32_t mean_adc_value = 0;
+
+	for(int i = 0; i < ADC_MEAN_VALUE; i++){
+		mean_adc_value += ADC_data_buffer[i];
+	}
+
+	mean_adc_value /= ADC_MEAN_VALUE;
+
+	mean_adc_value -= ADC_Start_Angle;
+
+	double angle = 0; // Fonction permettant de calculer l'angle en radian (faire avec donnée pour 0 degrée)
+
+	angle += POT_START_ANGLE * M_PI/180;
+
+	return angle;
 }
 
 

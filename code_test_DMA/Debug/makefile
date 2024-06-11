@@ -61,8 +61,8 @@ all: main-build
 main-build: test_uart_dma.elf secondary-outputs
 
 # Tool invocations
-test_uart_dma.elf test_uart_dma.map: $(OBJS) $(USER_OBJS) C:\Users\user\Documents\Github\Flying_arm\code_test_DMA\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "test_uart_dma.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\user\Documents\Github\Flying_arm\code_test_DMA\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test_uart_dma.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+test_uart_dma.elf test_uart_dma.map: $(OBJS) $(USER_OBJS) C:\Users\lecor\Documents\Github\Flying_arm\code_test_DMA\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "test_uart_dma.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\lecor\Documents\Github\Flying_arm\code_test_DMA\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test_uart_dma.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
