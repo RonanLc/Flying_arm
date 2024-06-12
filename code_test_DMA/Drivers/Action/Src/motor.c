@@ -3,7 +3,7 @@
 
 TIM_HandleTypeDef htim4;
 
-
+uint16_t PWM_flag, old_PWM_flag;
 
 void Motor_Stop(void){
 	Motor_SetSpeed(0);
@@ -96,6 +96,9 @@ void Motor_init(void) {
 		MOTOR_Error_Handler();
 	}
 
+    HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM4_IRQn);
+
 	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
 
 	if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK) {
@@ -131,11 +134,32 @@ void Motor_init(void) {
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
 
 	TIM4->CCR1 = 410;
+
+	PWM_flag = 0;
+	old_PWM_flag = 0xFFFF;
 }
 
+void Wait_Until(uint16_t time) {
+
+	time /= 10;
+
+	if(old_PWM_flag == 0xFFFF){PWM_flag = time;}
+
+	if(PWM_flag > old_PWM_flag){ return; }
+
+	while(PWM_flag != 0);
+
+	PWM_flag = time;
+	old_PWM_flag = PWM_flag;
+}
+
+void TIM4_IRQHandler(void) {
+	PWM_flag--;
+	HAL_TIM_IRQHandler(&htim4);
+}
 
 void MOTOR_Error_Handler(void) {
     while(1);

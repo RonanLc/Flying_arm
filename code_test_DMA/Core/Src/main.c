@@ -102,7 +102,6 @@ int main(void)
   Lcd_clear();
 
   double gyro;
-  uint8_t state = 0;
 
   ADC_init_PotOffset();
 
@@ -123,6 +122,12 @@ int main(void)
 	Lcd_string(" | ");
 	Lcd_float(gyro);
 	Lcd_string("           ");
+
+	Lcd_cursor(1, 0);
+	Lcd_string("stop");
+	Wait_Until(200);
+	Lcd_cursor(1, 0);
+	Lcd_string("run ");
 
 	/*Lcd_cursor(0, 0);
 	for(int i = 0 ; i < 11 ; i++){

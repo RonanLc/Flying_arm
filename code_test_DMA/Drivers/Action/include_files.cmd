@@ -11,7 +11,7 @@ rem Le reste du script ne doit normalement pas être touché.
 rem Version de HAL utilisé, à modifier en cas de mise à jour
 set "HALversion=1.28.0"
 
-rem Défini les types de fichier à ajouter au projet, à bien noter en minuscule
+rem Défini les types de fichier à ajouter au projet
 set "composant[0]=uart"
 set "composant[1]=usart"
 set "composant[2]=tim"
@@ -56,7 +56,7 @@ for /L %%i in (0 1 %nombreComposant%) do (
     copy "%HALSrcPath%stm32f4xx_hal_!composant!.c" "..\STM32F4xx_HAL_Driver\Src"
     copy "%HALSrcPath%stm32f4xx_ll_!composant!.c" "..\STM32F4xx_HAL_Driver\Src"
     copy "%HALSrcPath%stm32f4xx_hal_!composant!_ex.c" "..\STM32F4xx_HAL_Driver\Src"
-    
+
     copy "%HALIncPath%stm32f4xx_hal_!composant!.h" "..\STM32F4xx_HAL_Driver\Inc"
     copy "%HALIncPath%stm32f4xx_ll_!composant!.h" "..\STM32F4xx_HAL_Driver\Inc"
     copy "%HALIncPath%stm32f4xx_hal_!composant!_ex.h" "..\STM32F4xx_HAL_Driver\Inc"

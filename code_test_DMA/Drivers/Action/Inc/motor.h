@@ -14,6 +14,8 @@ extern "C" {
 
 extern TIM_HandleTypeDef htim4;
 
+extern uint16_t PWM_flag, old_PWM_flag;
+
 // Déclarations des fonctions
 
 void Clock_init(void);
@@ -25,6 +27,8 @@ void Motor_SetCounterValue(uint32_t counterValue);
 void Motor_SetSpeed(uint8_t pourcent);
 void Motor_SetTime(uint16_t usTime);
 
+void Wait_Until(uint16_t time);
+void TIM4_IRQHandler(void);
 void MOTOR_Error_Handler(void);
 
 #ifdef __cplusplus
