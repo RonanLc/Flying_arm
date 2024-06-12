@@ -27,7 +27,13 @@ void Sensor_Error_Handler(void);
 /*********************************************************/
 
 #define ADC_MEAN_VALUE 100
-#define POT_START_ANGLE -32
+#define POT_START_ANGLE -40
+#define ADC_ZERO_ANGLE 1700
+
+#define ADC_COEF_A_H 0.0891
+#define ADC_COEF_B_H -61.5304
+#define ADC_COEF_A_L 0.0537
+#define ADC_COEF_B_L -4.8767
 
 extern ADC_HandleTypeDef hadc2;
 extern DMA_HandleTypeDef hdma_adc2;
@@ -35,11 +41,9 @@ extern DMA_HandleTypeDef hdma_adc2;
 extern uint32_t ADC_data_buffer[ADC_MEAN_VALUE];
 extern uint32_t ADC_Start_Angle;
 
-
 void ADC_init(void);
 void ADC_init_PotOffset(void);
-double ADC_Decode_Pot(void);
-
+double ADC_Calculate_Pot(void);
 
 void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc);
 void DMA2_Stream2_IRQHandler(void);

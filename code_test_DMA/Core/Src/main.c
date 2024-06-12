@@ -78,7 +78,7 @@ int main(void)
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  Clock_init();
 
   /* USER CODE BEGIN SysInit */
 
@@ -104,6 +104,8 @@ int main(void)
   double gyro;
   uint8_t state = 0;
 
+  ADC_init_PotOffset();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,34 +118,19 @@ int main(void)
 
 	gyro = Sensor_GetGyro();
 
-	Lcd_cursor(1, 0);
-
-	if (gyro > 100) {
-		Motor_Start();
-		Motor_SetTime(1150);
-		state = 1;
-	}
-
-	else if (gyro < -100) {
-		Motor_Stop();
-		state = 0;
-	}
-
-	Lcd_int(state);
+	Lcd_cursor(0, 0);
+	Lcd_float(Sensor_GetAngle());
 	Lcd_string(" | ");
 	Lcd_float(gyro);
+	Lcd_string("           ");
 
-	Lcd_cursor(1, 11);
-	Lcd_string(" | ");
-	Lcd_int(Sensor_GetAngle());
-
-	Lcd_cursor(0, 0);
+	/*Lcd_cursor(0, 0);
 	for(int i = 0 ; i < 11 ; i++){
 
 	  Lcd_int(IMU_gyro_data[i][0]);
 	  Lcd_string(" ");
 	}
-	Lcd_string("           ");
+	Lcd_string("           ");*/
 
   }
   /* USER CODE END 3 */

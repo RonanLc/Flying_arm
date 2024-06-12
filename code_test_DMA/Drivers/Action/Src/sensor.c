@@ -15,7 +15,7 @@ void Sensor_init(void) {
 }
 
 double Sensor_GetAngle(void) {
-	return ADC_Decode_Pot();
+	return ADC_Calculate_Pot();
 }
 
 double Sensor_GetGyro(void) {
@@ -24,7 +24,7 @@ double Sensor_GetGyro(void) {
 }
 
 double Sensor_GetMotorSpeed(void) {
-	//return
+	return 0;
 }
 
 void Sensor_Error_Handler(void) {
@@ -90,14 +90,14 @@ void ADC_init(void) {
 
 void ADC_init_PotOffset(void) {
 
-	for(int i = 0; i < (ADC_MEAN_VALUE*ADC_MEAN_VALUE); i++){
+	for(int i = 0; i < ADC_MEAN_VALUE; i++){
 		ADC_Start_Angle += ADC_data_buffer[i];
 	}
 
-	ADC_Start_Angle /= (ADC_MEAN_VALUE*ADC_MEAN_VALUE);
+	ADC_Start_Angle /= ADC_MEAN_VALUE;
 }
 
-double ADC_Decode_Pot(void) {
+double ADC_Calculate_Pot(void) {
 
 	uint32_t mean_adc_value = 0;
 
@@ -107,11 +107,16 @@ double ADC_Decode_Pot(void) {
 
 	mean_adc_value /= ADC_MEAN_VALUE;
 
-	mean_adc_value -= ADC_Start_Angle;
+	double angle;
 
-	double angle = 0; // Fonction permettant de calculer l'angle en radian (faire avec donnée pour 0 degrée)
+	if ( mean_adc_value < 1600 ) {
+		angle = ADC_COEF_A_L * mean_adc_value + ADC_COEF_B_L;
+	}
+	else if ( mean_adc_value >= 1600 ) {
+		angle = ADC_COEF_A_H * mean_adc_value + ADC_COEF_B_H;
+	}
 
-	angle += POT_START_ANGLE * M_PI/180;
+	angle *= M_PI/180;
 
 	return angle;
 }

@@ -138,10 +138,7 @@ void Motor_init(void) {
 
 
 void MOTOR_Error_Handler(void) {
-
-    while(1) {
-
-    }
+    while(1);
 }
 
 
