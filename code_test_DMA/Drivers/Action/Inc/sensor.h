@@ -39,10 +39,8 @@ extern ADC_HandleTypeDef hadc2;
 extern DMA_HandleTypeDef hdma_adc2;
 
 extern uint32_t ADC_data_buffer[ADC_MEAN_VALUE];
-extern uint32_t ADC_Start_Angle;
 
 void ADC_init(void);
-void ADC_init_PotOffset(void);
 double ADC_Calculate_Pot(void);
 
 void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc);

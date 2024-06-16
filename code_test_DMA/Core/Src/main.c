@@ -103,8 +103,6 @@ int main(void)
 
   double gyro;
 
-  ADC_init_PotOffset();
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -114,6 +112,15 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	/*while(angle < 1){
+	 angle = Sensor_GetAngle();
+	 Lcd_cursor(0,0);
+	 Lcd_float(angle);
+	}
+
+	Motor_SetTime(2000);*/
+
+
 
 	gyro = Sensor_GetGyro();
 
@@ -128,14 +135,6 @@ int main(void)
 	Wait_Until(200);
 	Lcd_cursor(1, 0);
 	Lcd_string("run ");
-
-	/*Lcd_cursor(0, 0);
-	for(int i = 0 ; i < 11 ; i++){
-
-	  Lcd_int(IMU_gyro_data[i][0]);
-	  Lcd_string(" ");
-	}
-	Lcd_string("           ");*/
 
   }
   /* USER CODE END 3 */

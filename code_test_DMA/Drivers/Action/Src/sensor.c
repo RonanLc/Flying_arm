@@ -2,8 +2,6 @@
 #include "sensor.h"
 
 
-
-
 /*********************************************************/
 /*********************** Sensor **************************/
 /*********************************************************/
@@ -39,7 +37,6 @@ ADC_HandleTypeDef hadc2;
 DMA_HandleTypeDef hdma_adc2;
 
 uint32_t ADC_data_buffer[ADC_MEAN_VALUE];
-uint32_t ADC_Start_Angle;
 
 
 void ADC_init(void) {
@@ -87,15 +84,6 @@ void ADC_init(void) {
 	HAL_ADC_Start_DMA(&hadc2, ADC_data_buffer, ADC_MEAN_VALUE);
 }
 
-
-void ADC_init_PotOffset(void) {
-
-	for(int i = 0; i < ADC_MEAN_VALUE; i++){
-		ADC_Start_Angle += ADC_data_buffer[i];
-	}
-
-	ADC_Start_Angle /= ADC_MEAN_VALUE;
-}
 
 double ADC_Calculate_Pot(void) {
 
