@@ -1,0 +1,24 @@
+(0)
+- Welcome (1)
+	- Launch (2)
+		Info screen (3)
+			- Consigne :
+			- Start/Stop ou valeur capteurs
+	- Setup  (4)
+		- Controller : avance de phase / cascade
+		- Data filter : EKF, moyennage
+		- Consigne : (constante, sin?, triangle, rectangle)
+
+
+Ecran : |....................|
+	|....................|
+
+Led : O O O O
+Pot :    O
+
+Clavier : 1 2 3 A
+	  4 5 6 B
+	  7 8 9 C
+	  * 0 # D
+
+Button vert : O

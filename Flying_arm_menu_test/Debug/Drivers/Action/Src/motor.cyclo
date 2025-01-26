@@ -1,0 +1,10 @@
+../Drivers/Action/Src/motor.c:8:6:Motor_Stop	1
+../Drivers/Action/Src/motor.c:14:6:Motor_Start	1
+../Drivers/Action/Src/motor.c:18:6:Motor_SetCounterValue	1
+../Drivers/Action/Src/motor.c:22:6:Motor_SetSpeed	2
+../Drivers/Action/Src/motor.c:31:6:Motor_SetTime	1
+../Drivers/Action/Src/motor.c:36:6:Clock_init	3
+../Drivers/Action/Src/motor.c:77:6:Motor_init	6
+../Drivers/Action/Src/motor.c:147:6:Wait_Until	4
+../Drivers/Action/Src/motor.c:161:6:TIM4_IRQHandler	1
+../Drivers/Action/Src/motor.c:166:6:MOTOR_Error_Handler	1

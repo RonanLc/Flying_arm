@@ -1,0 +1,17 @@
+../Drivers/Action/Src/sensor.c:11:6:Sensor_init	8	static
+../Drivers/Action/Src/sensor.c:17:8:Sensor_GetAngle	8	static
+../Drivers/Action/Src/sensor.c:21:8:Sensor_GetGyro	8	static
+../Drivers/Action/Src/sensor.c:26:8:Sensor_GetMotorSpeed	4	static
+../Drivers/Action/Src/sensor.c:30:6:Sensor_Error_Handler	4	static
+../Drivers/Action/Src/sensor.c:45:6:ADC_init	32	static
+../Drivers/Action/Src/sensor.c:93:6:ADC_init_PotOffset	16	static
+../Drivers/Action/Src/sensor.c:102:8:ADC_Calculate_Pot	24	static
+../Drivers/Action/Src/sensor.c:127:6:HAL_ADC_MspInit	48	static
+../Drivers/Action/Src/sensor.c:166:6:DMA2_Stream2_IRQHandler	8	static
+../Drivers/Action/Src/sensor.c:185:6:IMU_init	24	static
+../Drivers/Action/Src/sensor.c:223:9:IMU_Decode_Gyro_Data	24	static
+../Drivers/Action/Src/sensor.c:246:6:IMU_Calculate_Gyro	32	static
+../Drivers/Action/Src/sensor.c:261:6:IMU_Calculate_All_Data	64	static
+../Drivers/Action/Src/sensor.c:299:6:IMU_init_GyroOffset	88	static
+../Drivers/Action/Src/sensor.c:360:6:HAL_UART_MspInit	48	static
+../Drivers/Action/Src/sensor.c:400:6:DMA1_Stream5_IRQHandler	8	static

@@ -1,0 +1,8 @@
+../Drivers/Action/Src/controller.c:8:6:Control_init	4	static
+../Drivers/Action/Src/controller.c:15:6:Control_selection	4	static
+../Drivers/Action/Src/controller.c:22:8:Control_refresh	32	static
+../Drivers/Action/Src/controller.c:38:8:min_max	32	static
+../Drivers/Action/Src/controller.c:54:8:thrust_to_PWM	24	static
+../Drivers/Action/Src/controller.c:65:8:leadphase_control	40	static
+../Drivers/Action/Src/controller.c:104:6:cascade_init	4	static
+../Drivers/Action/Src/controller.c:110:8:cascade_control	48	static

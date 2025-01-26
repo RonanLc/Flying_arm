@@ -1,0 +1,8 @@
+../Drivers/Action/Src/controller.c:8:6:Control_init	1
+../Drivers/Action/Src/controller.c:15:6:Control_selection	1
+../Drivers/Action/Src/controller.c:22:8:Control_refresh	5
+../Drivers/Action/Src/controller.c:38:8:min_max	3
+../Drivers/Action/Src/controller.c:54:8:thrust_to_PWM	1
+../Drivers/Action/Src/controller.c:65:8:leadphase_control	1
+../Drivers/Action/Src/controller.c:104:6:cascade_init	1
+../Drivers/Action/Src/controller.c:110:8:cascade_control	1
